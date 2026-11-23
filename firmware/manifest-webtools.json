@@ -1,0 +1,16 @@
+{
+  "name": "ShutterBox",
+  "version": "0.8.0",
+  "new_install_prompt_erase": true,
+  "builds": [
+    {
+      "chipFamily": "ESP32-S3",
+      "parts": [
+        {
+          "path": "ShutterBox-factory.bin",
+          "offset": 0
+        }
+      ]
+    }
+  ]
+}

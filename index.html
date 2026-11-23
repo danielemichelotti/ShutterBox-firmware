@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ShutterBox · Flasher</title>
+<meta name="description" content="Installa il firmware ShutterBox su una scheda Waveshare ESP32-S3-POE-ETH-8DI-8RO direttamente dal browser.">
+<link rel="icon" href="icon.png">
+<script type="module" src="https://unpkg.com/esp-web-tools@10.0.1/dist/web/install-button.js?module"></script>
+<style>
+  :root { --bg: #f4f5f7; --surface: #fff; --surface-2: #f0f2f5; --line: #e2e5ea; --text: #1b1f24; --muted: #667080;
+          --accent: #2f6fde; --accent-ink: #fff; --ok: #1f9d55; --warn: #c9730a; --danger: #d93a3a; --console: #0f1115; --console-ink: #c9ced6; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #14161a; --surface: #1d2026; --surface-2: #252931; --line: #30353e; --text: #e8eaee; --muted: #9aa3b2;
+            --accent: #5b8ff0; --accent-ink: #0b1220; --ok: #3ccf7c; --warn: #e8a13a; --danger: #f06464; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 15px/1.55 "Segoe UI", system-ui, -apple-system, sans-serif; color: var(--text); background: var(--bg); }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 0 16px; }
+  header { display: flex; align-items: center; gap: 14px; padding: 22px 0 10px; }
+  header img { width: 48px; height: 48px; }
+  header h1 { margin: 0; font-size: 22px; }
+  header p { margin: 0; color: var(--muted); font-size: 13px; }
+  header .sp { flex: 1; }
+  .lang { border: 1px solid var(--line); background: var(--surface); color: var(--text); border-radius: 8px; padding: 6px 10px; font: inherit; cursor: pointer; }
+  .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+  @media (max-width: 760px) { .grid { grid-template-columns: 1fr; } }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px; }
+  .card h2 { margin: 0 0 10px; font-size: 15px; display: flex; gap: 8px; align-items: center; }
+  .n { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 6px; background: var(--accent); color: var(--accent-ink); font-size: 12px; font-weight: 700; }
+  .ver { font-size: 26px; font-weight: 700; margin: 2px 0; }
+  .muted { color: var(--muted); font-size: 13px; }
+  .btn { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line); background: var(--surface-2); color: var(--text);
+         border-radius: 8px; padding: 8px 14px; font: inherit; font-weight: 600; cursor: pointer; text-decoration: none; }
+  .btn:hover { border-color: var(--accent); }
+  .btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+  .btn:disabled { opacity: .5; cursor: default; }
+  .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .stack > * + * { margin-top: 10px; }
+  ol { margin: 0; padding-left: 20px; } li + li { margin-top: 4px; }
+  .acc { display: grid; grid-template-columns: max-content minmax(0, 1fr) max-content; gap: 6px 12px; align-items: center; }
+  .acc b { font-family: Consolas, ui-monospace, monospace; font-size: 15px; overflow-wrap: anywhere; }
+  .acc .k { color: var(--muted); font-size: 13px; }
+  .warn { color: var(--warn); } .ok { color: var(--ok); } .err { color: var(--danger); }
+  pre#con { margin: 0; height: 320px; overflow: auto; background: var(--console); color: var(--console-ink); border-radius: 8px; padding: 10px 12px;
+            font: 12px/1.45 Consolas, ui-monospace, monospace; white-space: pre; }
+  pre#con .E { color: #f06464; } pre#con .W { color: #e8a13a; } pre#con .I { color: #8fc3ff; } pre#con .S { color: #5b8ff0; }
+  .note { border-left: 3px solid var(--accent); padding: 8px 12px; background: var(--surface-2); border-radius: 6px; }
+  footer { color: var(--muted); font-size: 12px; padding: 24px 0 32px; }
+  [hidden] { display: none !important; }
+  esp-web-install-button button { cursor: pointer; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <img src="icon.png" alt="">
+    <div><h1>ShutterBox</h1><p data-t="sub">Installazione del firmware dal browser · Waveshare ESP32-S3-POE-ETH-8DI-8RO</p></div>
+    <span class="sp"></span>
+    <button class="lang" id="lang">EN</button>
+  </header>
+
+  <div class="grid">
+    <section class="card stack">
+      <h2><span class="n">1</span><span data-t="fw">Firmware</span></h2>
+      <div class="ver" id="ver">…</div>
+      <div class="muted" id="notes" data-t="loading">Cerco l'ultima versione pubblicata…</div>
+      <div class="row"><a class="btn" id="m_it" hidden>📄 <span data-t="man_it">Manuale (italiano)</span></a>
+        <a class="btn" id="m_en" hidden>📄 <span data-t="man_en">Manual (English)</span></a></div>
+    </section>
+    <section class="card stack">
+      <h2><span class="n">2</span><span data-t="board">Scheda</span></h2>
+      <ol>
+        <li data-t="s1">Collega al PC la porta USB-C della scheda.</li>
+        <li data-t="s2">Premi «Installa», scegli la porta «USB JTAG/serial debug unit» e conferma.</li>
+        <li data-t="s3">«Cancella» riporta la scheda alla configurazione di fabbrica; senza, configurazione e amministratore restano.</li>
+      </ol>
+    </section>
+    <section class="card stack">
+      <h2><span class="n">3</span><span data-t="install">Installa</span></h2>
+      <div id="nosupport" class="note" hidden data-t="nosup">Serve Chrome o Edge su computer (WebSerial). Su Windows c'è anche il programma ShutterBox Flasher.</div>
+      <esp-web-install-button manifest="firmware/manifest-webtools.json" id="ewt">
+        <button slot="activate" class="btn primary" style="font-size:16px;padding:12px 22px" data-t="install_btn">Installa sulla scheda</button>
+        <span slot="unsupported"></span><span slot="not-allowed"></span>
+      </esp-web-install-button>
+      <a class="btn" href="https://github.com/danielemichelotti/ShutterBox-firmware/releases/latest/download/ShutterBox-Flasher.exe">⬇ <span data-t="exe">Programma per Windows</span></a>
+    </section>
+  </div>
+
+  <section class="card stack" style="margin-top:12px">
+    <h2><span class="n">→</span><span data-t="access">Accesso alla scheda</span></h2>
+    <div class="row">
+      <button class="btn primary" id="connect" data-t="read">⟳ Leggi dalla scheda (USB)</button>
+      <button class="btn" id="stop" hidden data-t="stop">■ Ferma il monitor</button>
+      <span class="muted" id="mstate"></span>
+    </div>
+    <div class="acc">
+      <span class="k" data-t="page">Pagina web</span><b id="a_url">—</b><span class="row"><a class="btn" id="open" target="_blank" rel="noopener" hidden data-t="open">Apri</a></span>
+      <span class="k" data-t="admin">Amministratore</span><b id="a_admin">—</b><span></span>
+      <span class="k" data-t="ap">Access point · rete</span><b id="a_ssid">—</b><span></span>
+      <span class="k" data-t="appw">Access point · password</span><b id="a_apass">—</b><span></span>
+    </div>
+    <div class="muted" id="hint" data-t="hint0">«Leggi dalla scheda» la riavvia e legge dalla porta USB indirizzo, access point e amministratore (dopo «Installa», chiudi prima la finestra dell'installazione).</div>
+    <pre id="con" aria-label="Monitor seriale"></pre>
+    <div class="row"><button class="btn" id="clear" data-t="clear">Pulisci</button><button class="btn" id="save" data-t="save">Salva…</button></div>
+  </section>
+
+  <footer data-t="foot">Il firmware arriva dalle release pubbliche di danielemichelotti/ShutterBox-firmware; l'installazione scrive l'immagine completa all'indirizzo 0x0 dopo averla verificata. Problemi a trovare la porta: chiudi gli altri programmi che usano le porte seriali; se la scheda resta invisibile tieni premuto BOOT, premi e rilascia RESET, poi rilascia BOOT e riprova.</footer>
+</div>
+
+<script>
+const EN = {
+  sub: 'Firmware installation from the browser · Waveshare ESP32-S3-POE-ETH-8DI-8RO', fw: 'Firmware', loading: 'Looking for the latest published version…',
+  man_it: 'Manuale (italiano)', man_en: 'Manual (English)', board: 'Board',
+  s1: 'Connect the board\'s USB-C port to the PC.', s2: 'Press «Install», choose the «USB JTAG/serial debug unit» port and confirm.',
+  s3: '«Erase» resets the board to factory settings; without it, configuration and administrator are kept.',
+  install: 'Install', nosup: 'Needs Chrome or Edge on a computer (WebSerial). On Windows there is also the ShutterBox Flasher program.',
+  install_btn: 'Install on the board', exe: 'Windows program', access: 'Board access', read: '⟳ Read from the board (USB)', stop: '■ Stop the monitor',
+  page: 'Web page', open: 'Open', admin: 'Administrator', ap: 'Access point · network', appw: 'Access point · password',
+  hint0: '«Read from the board» restarts it and reads address, access point and administrator from the USB port (after «Install», close the installation window first).',
+  clear: 'Clear', save: 'Save…',
+  foot: 'Firmware comes from the public releases of danielemichelotti/ShutterBox-firmware; installation writes the full image at address 0x0 after verifying it. If the port is not found: close other programs using serial ports; if the board stays invisible hold BOOT, press and release RESET, then release BOOT and retry.',
+  latest: 'Latest published version', present: 'present', create: 'to be created (first access)', connected: 'connected', waiting: 'waiting for the board…',
+  h_admin: 'First access: open the page and create the administrator.', h_https: 'HTTPS: the first time the browser flags the board certificate as not verified; accept the exception.',
+  h_ap: 'Without network: join the Wi-Fi «{0}» and open {1}', h_none: 'No address after 25 s: check the network cable. Without cable, after 20 s the board opens its own Wi-Fi.',
+  reset: '— restarting the board to read the access data', con: '— connected', fail: 'Serial port not opened: '
+};
+const IT = {};
+document.querySelectorAll('[data-t]').forEach(e => { IT[e.dataset.t] = e.textContent; });
+Object.assign(IT, { latest: 'Ultima versione pubblicata', present: 'presente', create: 'da creare (primo accesso)', connected: 'collegato', waiting: 'in attesa della scheda…',
+  h_admin: 'Primo accesso: apri la pagina e crea l\'amministratore.', h_https: 'HTTPS: la prima volta il browser segnala il certificato della scheda come non verificato; conferma l\'eccezione.',
+  h_ap: 'Senza rete: collegati al Wi-Fi «{0}» e apri {1}', h_none: 'Nessun indirizzo dopo 25 s: controlla il cavo di rete. Senza cavo, dopo 20 s la scheda apre il suo Wi-Fi.',
+  reset: '— riavvio della scheda per leggere i dati di accesso', con: '— collegato', fail: 'Porta seriale non aperta: ' });
+let LANG = (localStorage.getItem('sbf-lang') || (navigator.language || 'it')).toLowerCase().startsWith('it') ? 'it' : 'en';
+const T = k => (LANG === 'en' ? EN : IT)[k] || k;
+let MAN = null;
+function applyLang() {
+  document.documentElement.lang = LANG;
+  document.querySelectorAll('[data-t]').forEach(e => { e.textContent = T(e.dataset.t); });
+  document.getElementById('lang').textContent = LANG === 'it' ? 'EN' : 'IT';
+  showManifest(); showAccess();
+}
+document.getElementById('lang').onclick = () => { LANG = LANG === 'it' ? 'en' : 'it'; try { localStorage.setItem('sbf-lang', LANG); } catch (e) {} applyLang(); };
+
+function showManifest() {
+  if (!MAN) return;
+  document.getElementById('ver').textContent = MAN.version;
+  document.getElementById('notes').textContent = `${T('latest')}${MAN.date ? ', ' + MAN.date : ''}. ${MAN.notes || ''}`;
+  const rel = `https://github.com/danielemichelotti/ShutterBox-firmware/releases/download/v${MAN.version}/`;
+  const it = document.getElementById('m_it'), en = document.getElementById('m_en');
+  const docs = MAN.docs || [];
+  it.hidden = !docs.includes('manual_it'); en.hidden = !docs.includes('manual_en');
+  it.href = rel + `ShutterBox-Manuale-${MAN.version}.pdf`; en.href = rel + `ShutterBox-Manual-${MAN.version}-en.pdf`;
+}
+fetch('firmware/manifest.json', { cache: 'no-store' }).then(r => r.json()).then(m => { MAN = m; showManifest(); }).catch(() => { document.getElementById('ver').textContent = '—'; });
+if (!('serial' in navigator)) { document.getElementById('nosupport').hidden = false; document.getElementById('connect').disabled = true; }
+
+/* ---------- monitor seriale e dati di accesso (righe «accesso» del firmware) ---------- */
+const RX_PAGE = /Pagina web: (https?):\/\/([\d.]+)\/ \((cavo|wifi)\)/, RX_AP = /Access point acceso: rete "(.*?)", password "(.*?)", indirizzo (\S+)/,
+      RX_ADMIN = /Amministratore: (presente|da creare)/, RX_BOOT = /^(ESP-ROM:|rst:0x)/;
+let acc = {}, bootT = 0, port = null, reader = null, running = false, lines = 0;
+const con = document.getElementById('con');
+function addLine(t) {
+  const cls = t.startsWith('— ') ? 'S' : /^[EWI] \(/.test(t) ? t[0] : '';
+  const span = document.createElement('span');
+  if (cls) span.className = cls;
+  span.textContent = t + '\n';
+  const atEnd = con.scrollTop + con.clientHeight >= con.scrollHeight - 20;
+  con.append(span);
+  if (++lines > 3000) { con.firstChild.remove(); lines--; }
+  if (atEnd) con.scrollTop = con.scrollHeight;
+}
+function showAccess() {
+  const url = acc.ip ? `${acc.scheme}://${acc.ip}/` : null;
+  const set = (id, v, cls) => { const e = document.getElementById(id); e.textContent = v || '—'; e.className = v ? (cls || 'ok') : ''; };
+  set('a_url', url); set('a_admin', acc.admin ? T(acc.admin === 'presente' ? 'present' : 'create') : null, acc.admin === 'da creare' ? 'warn' : 'ok');
+  set('a_ssid', acc.ssid); set('a_apass', acc.apass);
+  const o = document.getElementById('open'); o.hidden = !url; if (url) o.href = url;
+  const h = [];
+  if (acc.admin === 'da creare') h.push(T('h_admin'));
+  if (acc.scheme === 'https') h.push(T('h_https'));
+  if (acc.ssid) h.push(T('h_ap').replace('{0}', acc.ssid).replace('{1}', acc.apurl || 'http://192.168.4.1/'));
+  else if (bootT && !acc.ip && Date.now() - bootT > 25000) h.push(T('h_none'));
+  document.getElementById('hint').textContent = h.length ? h.join(' ') : T('hint0');
+}
+function scan(t) {
+  let m;
+  if (RX_BOOT.test(t)) { acc = {}; bootT = Date.now(); }
+  if ((m = t.match(RX_PAGE))) Object.assign(acc, { scheme: m[1], ip: m[2], via: m[3] });
+  if ((m = t.match(RX_AP))) Object.assign(acc, { ssid: m[1], apass: m[2], apurl: m[3] });
+  if ((m = t.match(RX_ADMIN))) acc.admin = m[1];
+  showAccess();
+}
+setInterval(showAccess, 2000);
+async function startMonitor() {
+  try {
+    if (!port) port = await navigator.serial.requestPort({ filters: [{ usbVendorId: 0x303a }] }).catch(() => navigator.serial.requestPort());
+    await port.open({ baudRate: 115200 });
+  } catch (e) { addLine(T('fail') + e.message); return; }
+  running = true;
+  document.getElementById('stop').hidden = false;
+  document.getElementById('mstate').textContent = '● ' + T('connected');
+  addLine(T('con'));
+  // riavvio come esptool (RTS = EN) per leggere le righe dell'avvio
+  addLine(T('reset'));
+  try { await port.setSignals({ dataTerminalReady: false, requestToSend: true }); await new Promise(r => setTimeout(r, 200)); await port.setSignals({ dataTerminalReady: false, requestToSend: false }); } catch (e) {}
+  const dec = new TextDecoder();
+  let buf = '';
+  while (running && port.readable) {
+    reader = port.readable.getReader();
+    try {
+      for (;;) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        buf += dec.decode(value, { stream: true });
+        const parts = buf.split('\n'); buf = parts.pop();
+        for (const p of parts) { const t = p.replace(/\x1b\[[0-9;]*[A-Za-z]/g, '').replace(/\r$/, ''); scan(t); addLine(t); }
+      }
+    } catch (e) { document.getElementById('mstate').textContent = '● ' + T('waiting'); }
+    finally { reader.releaseLock(); }
+  }
+}
+async function stopMonitor() {
+  running = false;
+  try { await reader?.cancel(); } catch (e) {}
+  try { await port?.close(); } catch (e) {}
+  document.getElementById('stop').hidden = true;
+  document.getElementById('mstate').textContent = '';
+}
+document.getElementById('connect').onclick = async () => { if (running) await stopMonitor(); startMonitor(); };
+document.getElementById('stop').onclick = stopMonitor;
+document.getElementById('clear').onclick = () => { con.textContent = ''; lines = 0; };
+document.getElementById('save').onclick = () => {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([con.textContent], { type: 'text/plain' }));
+  a.download = `shutterbox-console-${new Date().toISOString().slice(0, 19).replace(/[:T]/g, '')}.txt`;
+  a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+};
+applyLang();
+</script>
+</body>
+</html>

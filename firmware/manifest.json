@@ -1,0 +1,14 @@
+{
+  "version": "0.8.0",
+  "url": "https://github.com/danielemichelotti/ShutterBox-firmware/releases/download/v0.8.0/ShutterBox-0.8.0.bin",
+  "sha256": "2201746d223a310d741cf61381a82accf347f978180f238b707ffa4de6607747",
+  "size": 1406384,
+  "notes": "Fase 7: programma ShutterBox Flasher per Windows (ultima versione sempre da GitHub, monitor seriale, accesso diretto alla scheda, ricerca in rete), flasher nel browser e manuale in italiano e inglese.",
+  "date": "2026-11-23",
+  "factory_sha256": "5d2bd8fce91f8d6e238884e945dfb029b814323eb340feff778403acfd63e0c6",
+  "factory_size": 1537456,
+  "docs": [
+    "manual_it",
+    "manual_en"
+  ]
+}
