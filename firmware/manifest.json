@@ -1,12 +1,12 @@
 {
-  "version": "0.8.0",
-  "url": "https://github.com/danielemichelotti/ShutterBox-firmware/releases/download/v0.8.0/ShutterBox-0.8.0.bin",
-  "sha256": "2201746d223a310d741cf61381a82accf347f978180f238b707ffa4de6607747",
-  "size": 1406384,
-  "notes": "Fase 7: programma ShutterBox Flasher per Windows (ultima versione sempre da GitHub, monitor seriale, accesso diretto alla scheda, ricerca in rete), flasher nel browser e manuale in italiano e inglese.",
-  "date": "2026-11-23",
-  "factory_sha256": "5d2bd8fce91f8d6e238884e945dfb029b814323eb340feff778403acfd63e0c6",
-  "factory_size": 1537456,
+  "version": "0.8.1",
+  "url": "https://github.com/danielemichelotti/ShutterBox-firmware/releases/download/v0.8.1/ShutterBox-0.8.1.bin",
+  "sha256": "131e0f8f68f77f948ab0df9c907d886035449409e01ebf0d939931ad47b621c9",
+  "size": 1408528,
+  "notes": "In Home Assistant i gruppi non diventano più grigi (ora hanno uno stato) e c'è l'entità «Tutte le tapparelle»; il pulsante Copia della chiave ESPHome funziona anche con la pagina in http.",
+  "date": "2026-11-27",
+  "factory_sha256": "2d5901f2b100c697990a962be453b312ac53e6982910305dff0343174b5b3e1e",
+  "factory_size": 1539600,
   "docs": [
     "manual_it",
     "manual_en"
